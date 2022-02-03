@@ -1,7 +1,7 @@
 import re
 from pyrogram import filters, Client
 from pyrogram.errors.exceptions.bad_request_400 import ChannelInvalid, UsernameInvalid, UsernameNotModified
-from info import ADMINS, LOG_CHANNEL, FILE_STORE_CHANNEL
+from info import ADMINS, LOG_CHANNEL, FILE_STORE_CHANNEL, PUBLIC_FILE_STORE
 from database.ia_filterdb import unpack_new_file_id
 from utils import temp
 import re
@@ -13,26 +13,38 @@ import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-@Client.on_message(filters.command('link') & filters.user(ADMINS))
+async def allowed(_, __, message):
+    if PUBLIC_FILE_STORE:
+        return True
+    if message.from_user and message.from_user.id in ADMINS:
+        return True
+    return False
+
+@Client.on_message(filters.command(['link', 'plink']) & filters.create(allowed))
 async def gen_link_s(bot, message):
     replied = message.reply_to_message
     if not replied:
-        return await message.reply('Reply to a message to get a sharable link.')
+        return await message.reply('Reply to a message to get a shareable link.')
     file_type = replied.media
     if file_type not in ["video", 'audio', 'document']:
         return await message.reply("Reply to a supported media")
+    if message.has_protected_content and message.chat.id not in ADMINS:
+        return await message.reply("okDa")
     file_id, ref = unpack_new_file_id((getattr(replied, file_type)).file_id)
-    await message.reply(f"Here is your Link:\nhttps://t.me/{temp.U_NAME}?start={file_id}")
+    string = 'filep_' if message.text.lower().strip() == "/plink" else 'file_'
+    string += file_id
+    outstr = base64.urlsafe_b64encode(string.encode("ascii")).decode().strip("=")
+    await message.reply(f"Here is your Link:\nhttps://t.me/{temp.U_NAME}?start={outstr}")
     
     
-@Client.on_message(filters.command('batch') & filters.user(ADMINS))
+@Client.on_message(filters.command(['batch', 'pbatch']) & filters.create(allowed))
 async def gen_link_batch(bot, message):
     if " " not in message.text:
         return await message.reply("Use correct format.\nExample <code>/batch https://t.me/TeamEvamaria/10 https://t.me/TeamEvamaria/20</code>.")
     links = message.text.strip().split(" ")
     if len(links) != 3:
         return await message.reply("Use correct format.\nExample <code>/batch https://t.me/TeamEvamaria/10 https://t.me/TeamEvamaria/20</code>.")
-    _, first, last = links
+    cmd, first, last = links
     regex = re.compile("(https://)?(t\.me/|telegram\.me/|telegram\.dog/)(c/)?(\d+|[a-zA-Z_0-9]+)/(\d+)$")
     match = regex.match(first)
     if not match:
@@ -63,42 +75,18 @@ async def gen_link_batch(bot, message):
 
     sts = await message.reply("Generating link for your message.\nThis may take time depending upon number of messages")
     if chat_id in FILE_STORE_CHANNEL:
-        string = f"{f_msg_id}_{l_msg_id}_{chat_id}"
+        string = f"{f_msg_id}_{l_msg_id}_{chat_id}_{cmd.lower().strip()}"
         b_64 = base64.urlsafe_b64encode(string.encode("ascii")).decode().strip("=")
         return await sts.edit(f"Here is your link https://t.me/{temp.U_NAME}?start=DSTORE-{b_64}")
 
-    msgs_list = []
-    c_msg = f_msg_id
-    
-    diff = l_msg_id - f_msg_id
-    
     FRMT = "Generating Link...\nTotal Messages: `{total}`\nDone: `{current}`\nRemaining: `{rem}`\nStatus: `{sts}`"
-    if diff <= 200:
-        msgs = await bot.get_messages(f_chat_id, list(range(f_msg_id, l_msg_id+1)))
-        msgs_list += msgs
-    else:
-        c_msg = f_msg_id
-        while True:
-            new_diff = l_msg_id - c_msg
-            if new_diff > 200:
-                new_diff = 200
-            elif new_diff <= 0:
-                break
-            print(new_diff, c_msg)
-            msgs = await bot.get_messages(f_chat_id, list(range(c_msg, c_msg+new_diff)))
-            msgs_list += msgs
-            try:
-                await sts.edit(FRMT.format(total=diff, current=(c_msg - f_msg_id), rem=(l_msg_id - c_msg), sts="Fetching Messages"))
-            except:
-                pass
-            c_msg += new_diff
 
     outlist = []
-    
+
     # file store without db channel
     og_msg = 0
     tot = 0
-    for msg in msgs_list:
+    async for msg in bot.iter_messages(f_chat_id, l_msg_id, f_msg_id):
         tot += 1
         if msg.empty or msg.service:
             continue
@@ -108,20 +96,25 @@ async def gen_link_batch(bot, message):
         try:
             file_type = msg.media
             file = getattr(msg, file_type)
+            caption = getattr(msg, 'caption', '')
+            if caption:
+                caption = caption.html
             if file:
                 file = {
                     "file_id": file.file_id,
-                    "caption": msg.caption,
+                    "caption": caption,
                     "title": getattr(file, "file_name", ""),
                     "size": file.file_size,
+                    "protect": cmd.lower().strip() == "/pbatch",
                 }
+
                 og_msg +=1
                 outlist.append(file)
         except:
             pass
         if not og_msg % 20:
             try:
-                await sts.edit(FRMT.format(total=diff, current=tot, rem=(diff - tot), sts="Saving Messages"))
+                await sts.edit(FRMT.format(total=l_msg_id-f_msg_id, current=tot, rem=((l_msg_id-f_msg_id) - tot), sts="Saving Messages"))
             except:
                 pass
     with open(f"batchmode_{message.from_user.id}.json", "w+") as out:
