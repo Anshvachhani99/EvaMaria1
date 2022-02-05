@@ -769,13 +769,13 @@ async def advantage_spell_chok(msg):
         await msg.delete()
         return
     SPELL_CHECK[msg.message_id] = movielist
-    for k, movie in enumerate(movielist)]
+    
     btn = [[
         InlineKeyboardButton(
             text="💖 Contact To My Owner",
             url="http://t.me/AakankshaV2bot"
         )
-    ]]
+    ]for k, movie in enumerate(movielist)]
     await msg.reply_photo(photo="https://telegra.ph/file/90774d8c83299d11b2199.jpg", caption="I couldn't find anything related to that\nDid you mean any one of these?",reply_markup=InlineKeyboardMarkup(btn))
     
     
