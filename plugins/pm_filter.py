@@ -769,15 +769,11 @@ async def advantage_spell_chok(msg):
         await msg.delete()
         return
     SPELL_CHECK[msg.message_id] = movielist
-    btn = [[
-        InlineKeyboardButton(
-            text=movie.strip(),
-            callback_data=f"spolling#{user}#{k}",
-        )
-    ] for k, movie in enumerate(movielist)]
-    btn.append([InlineKeyboardButton(text="Close", callback_data=f'spolling#{user}#close_spellcheck')])
+        buttons = [[
+            InlineKeyboardButton('💖 Contact To My Owner', url=f'http://t.me/AakankshaV2bot')
+        ]]          
     await msg.reply("I couldn't find anything related to that\nDid you mean any one of these?",
-                    reply_markup=InlineKeyboardMarkup(btn))
+                    reply_markup=InlineKeyboardMarkup(buttons))
 
 
 async def manual_filters(client, message, text=False):
