@@ -22,7 +22,7 @@ from database.filters_mdb import (
     get_filters,
 )
 import logging
-
+semx = "./assets/mrunal.jpg"
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
 
@@ -775,7 +775,7 @@ async def advantage_spell_chok(msg):
             url="http://t.me/AakankshaV2bot"
         )
     ],([InlineKeyboardButton(text="Close", callback_data=f'spolling#{user}#close_spellcheck')])
-    await msg.reply("I couldn't find anything related to that\nDid you mean any one of these?",
+    await Client.send_file(semx,"I couldn't find anything related to that\nDid you mean any one of these?",
                     reply_markup=InlineKeyboardMarkup(btn))
 
 
