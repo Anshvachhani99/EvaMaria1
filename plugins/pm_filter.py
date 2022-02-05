@@ -22,7 +22,7 @@ from database.filters_mdb import (
     get_filters,
 )
 import logging
-semx = "./assets/mrunal.jpg"
+semx = "./assets/mrunall.jpg"
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
 
