@@ -768,14 +768,6 @@ async def advantage_spell_chok(msg):
         await k.delete()
         await msg.delete()
         return
-    SPELL_CHECK[msg.message_id] = movielist
-    btn = [[
-        InlineKeyboardButton(
-            text="💖 Contact To My Owner",
-            url="http://t.me/AakankshaV2bot"
-        )
-    ]]
-    await msg.reply_photo(photo="https://telegra.ph/file/90774d8c83299d11b2199.jpg", caption="I couldn't find anything related to that\nDid you mean any one of these?",reply_markup=InlineKeyboardMarkup(btn))
 
 
 async def manual_filters(client, message, text=False):
