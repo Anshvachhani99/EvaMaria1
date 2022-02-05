@@ -769,6 +769,7 @@ async def advantage_spell_chok(msg):
         await msg.delete()
         return
     SPELL_CHECK[msg.message_id] = movielist
+    for k, movie in enumerate(movielist)]
     btn = [[
         InlineKeyboardButton(
             text="💖 Contact To My Owner",
