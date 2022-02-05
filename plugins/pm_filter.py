@@ -774,7 +774,7 @@ async def advantage_spell_chok(msg):
             text="💖 Contact To My Owner",
             url="http://t.me/AakankshaV2bot"
         )
-    ]
+    ]]
     await Client.send_file(semx,"I couldn't find anything related to that\nDid you mean any one of these?",
                     reply_markup=InlineKeyboardMarkup(btn))
 
