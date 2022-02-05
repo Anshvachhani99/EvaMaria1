@@ -769,9 +769,9 @@ async def advantage_spell_chok(msg):
         await msg.delete()
         return
     SPELL_CHECK[msg.message_id] = movielist
-        buttons = [[
+        buttons = [
             InlineKeyboardButton('💖 Contact To My Owner', url=f'http://t.me/AakankshaV2bot')
-        ]]          
+        ]
     await msg.reply("I couldn't find anything related to that\nDid you mean any one of these?",
                     reply_markup=InlineKeyboardMarkup(buttons))
 
