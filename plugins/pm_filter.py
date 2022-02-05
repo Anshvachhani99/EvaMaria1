@@ -775,7 +775,7 @@ async def advantage_spell_chok(msg):
             url="http://t.me/AakankshaV2bot"
         )
     ]]
-    await Client.send_file(semx,"I couldn't find anything related to that\nDid you mean any one of these?",
+    await Client.send_photo("https://telegra.ph/file/90774d8c83299d11b2199.jpg",caption="I couldn't find anything related to that\nDid you mean any one of these?",
                     reply_markup=InlineKeyboardMarkup(btn))
 
 
