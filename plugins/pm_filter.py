@@ -151,7 +151,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
         await query.message.delete()
     elif query.data == 'dsclose':
         if query.from_user.id == query.message.reply_to_message.from_user.id:
-            await query.answer(Jake Khud Ka Search Kr Dusre ka delete mat kr)
+            await query.answer("Jake Khud Ka Search Kr Dusre ka delete mat kr",show_alert=True)
             await query.message.delete()
             await query.message.reply_to_message.delete()
         else:
