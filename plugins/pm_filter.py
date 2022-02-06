@@ -150,7 +150,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
     if query.data == "close_data":
         await query.message.delete()
     elif query.data == 'dsclose':
-        if query.from_user.id == query.reply_to_message.from_user.id:
+        if query.from_user.id == query.message.reply_to_message.from_user.id:
             await query.answer()
             await query.message.delete()
         else:
