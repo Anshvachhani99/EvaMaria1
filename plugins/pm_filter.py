@@ -92,14 +92,14 @@ async def next_page(bot, query):
                                   callback_data="pages")]
         )
         if BUTTON:
-            btn.append([InlineKeyboardButton(text="Close ❌",callback_data="close")]
+            btn.append([InlineKeyboardButton(text="Close ❌",callback_data="dsclose")]
         ) 
     elif off_set is None:
         btn.append(
             [InlineKeyboardButton(f"🗓 {round(int(offset) / 10) + 1} / {round(total / 10)}", callback_data="pages"),
              InlineKeyboardButton("NEXT ⏩", callback_data=f"next_{req}_{key}_{n_offset}")])
         if BUTTON:
-            btn.append([InlineKeyboardButton(text="Close ❌",callback_data="close")]
+            btn.append([InlineKeyboardButton(text="Close ❌",callback_data="dsclose")]
         ) 
     else:
         btn.append(
@@ -110,7 +110,7 @@ async def next_page(bot, query):
             ],
         )
         if BUTTON:
-            btn.append([InlineKeyboardButton(text="Close ❌",callback_data="close")]
+            btn.append([InlineKeyboardButton(text="Close ❌",callback_data="dsclose")]
         ) 
     try:
         await query.edit_message_reply_markup(
@@ -149,6 +149,12 @@ async def advantage_spoll_choker(bot, query):
 async def cb_handler(client: Client, query: CallbackQuery):
     if query.data == "close_data":
         await query.message.delete()
+    elif query.data == 'dsclose':
+        if query.from_user.id == query.reply_to_message.from_user.id:
+            await query.answer()
+            await query.message.delete()
+        else:
+            await query.answer()
     elif query.data == "delallconfirm":
         userid = query.from_user.id
         chat_type = query.message.chat.type
@@ -670,14 +676,14 @@ async def auto_filter(client, msg, spoll=False):
              InlineKeyboardButton(text="NEXT ⏩", callback_data=f"next_{req}_{key}_{offset}")]
         )
         if BUTTON:
-            btn.append([InlineKeyboardButton(text="Close ❌",callback_data="close")]
+            btn.append([InlineKeyboardButton(text="Close ❌",callback_data="dsclose")]
         ) 
     else:
         btn.append(
             [InlineKeyboardButton(text="🗓 1/1", callback_data="pages")]
         )
         if BUTTON:
-            btn.append([InlineKeyboardButton(text="Close ❌",callback_data="close")]
+            btn.append([InlineKeyboardButton(text="Close ❌",callback_data="dsclose")]
         ) 
     imdb = await get_poster(search, file=(files[0]).file_name) if settings["imdb"] else None
     TEMPLATE = settings['template']
