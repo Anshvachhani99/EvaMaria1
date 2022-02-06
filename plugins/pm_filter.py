@@ -155,7 +155,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
             await query.message.delete()
             await query.message.reply_to_message.delete()
         else:
-            await query.answer()
+            await query.answer("Jake Khud Ka Search Kr Dusre ka delete mat kr",show_alert=True)
     elif query.data == "delallconfirm":
         userid = query.from_user.id
         chat_type = query.message.chat.type
